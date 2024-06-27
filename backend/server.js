@@ -1,9 +1,10 @@
 const express = require('express');
 const dotenv = require('dotenv');
-const { chats } = require('./data/data.js');
-const connectDB = require('./config/db.js');
+const { chats } = require('./data/data');
+const connectDB = require('./config/db');
 const colors = require('colors');
-
+const userRoute = require('./Router/userRoutes');
+const {notfound,errHandler} = require('./Middleware/errorMidleware');
 dotenv.config();
 
 const PORT=process.env.PORT||8000
@@ -11,18 +12,15 @@ const PORT=process.env.PORT||8000
 const app = express();
 connectDB();
 
+app.use(express.json());//this accept JSONdata from frontend;
+
 app.get('/',(req,res)=>{
     res.send('API is running')
 });
+app.use('/api/user',userRoute);
 
-app.get("/api/chat",(req,res)=>{
-    res.send(chats);
-})
-app.get("/api/chat/:id",(req,res)=>{
-    console.log(req.params.id);
-    const singleChat=chats.find(c=>c._id===req.params.id);
-    res.send(singleChat);
-})
+app.use(notfound);
+app.use(errHandler);
 app.listen(PORT,(err)=>{
     if(err){
         console.log(err);
