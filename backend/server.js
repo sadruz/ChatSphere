@@ -1,17 +1,18 @@
 const express = require('express');
 const dotenv = require('dotenv');
-const { chats } = require('./data/data');
 const connectDB = require('./config/db');
-const colors = require('colors');
 const userRoute = require('./Router/userRoutes');
 const chatRoutes = require('./Router/chatRoutes');
+const messageRoutes = require('./Router/messageRoutes');
 const {notfound,errHandler} = require('./Middleware/errorMidleware');
+
 dotenv.config();
 
 const PORT=process.env.PORT||8000
 
 const app = express();
 connectDB();
+
 
 app.use(express.json());//this accept JSONdata from frontend;
 
@@ -20,6 +21,7 @@ app.get('/',(req,res)=>{
 });
 app.use('/api/user',userRoute);
 app.use('/api/chat',chatRoutes);
+app.use('api/message',messageRoutes);
 
 app.use(notfound);
 app.use(errHandler);
